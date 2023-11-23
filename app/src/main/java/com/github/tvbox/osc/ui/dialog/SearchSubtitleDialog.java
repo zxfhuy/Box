@@ -3,6 +3,7 @@ package com.github.tvbox.osc.ui.dialog;
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -17,7 +18,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
-import com.github.tvbox.osc.bean.Subtitle;
+import com.github.tvbox.osc.bean.SubtitleBean;
 import com.github.tvbox.osc.bean.SubtitleData;
 import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.ui.adapter.SearchSubtitleAdapter;
@@ -33,7 +34,7 @@ import java.util.List;
 
 public class SearchSubtitleDialog extends BaseDialog {
 
-    private Context mContext;
+    private final Context mContext;
     private TvRecyclerView mGridView;
     private SearchSubtitleAdapter searchAdapter;
 
@@ -43,10 +44,10 @@ public class SearchSubtitleDialog extends BaseDialog {
     private ProgressBar loadingBar;
     private SubtitleViewModel subtitleViewModel;
     private int page = 1;
-    private int maxPage = 5;
+    private final int maxPage = 5;
     private String searchWord = "";
 
-    private List<Subtitle> zipSubtitles = new ArrayList<>();
+    private List<SubtitleBean> zipSubtitles = new ArrayList<>();
     private boolean isSearchPag = true;
 
 
@@ -64,7 +65,7 @@ public class SearchSubtitleDialog extends BaseDialog {
     protected void initView(Context context) {
         loadingBar = findViewById(R.id.loadingBar);
         mGridView = findViewById(R.id.mGridView);
-        subtitleSearchEt = findViewById(R.id.input);
+        subtitleSearchEt = findViewById(R.id.input_sub);
         subtitleSearchBtn = findViewById(R.id.inputSubmit);
         subtitleSearchBtn.setText(HomeActivity.getRes().getString(R.string.vod_sub_search));
 
@@ -76,7 +77,7 @@ public class SearchSubtitleDialog extends BaseDialog {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
-                Subtitle subtitle = searchAdapter.getData().get(position);
+                SubtitleBean subtitle = searchAdapter.getData().get(position);
                 //加载字幕
                 if (mSubtitleLoader != null) {
                     if (subtitle.getIsZip()) {
@@ -101,6 +102,9 @@ public class SearchSubtitleDialog extends BaseDialog {
             }
         }, mGridView);
 
+        // takagen99 : Fix on Key Enter
+        subtitleSearchEt.setOnKeyListener(onSoftKeyPress);
+
         subtitleSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,6 +115,18 @@ public class SearchSubtitleDialog extends BaseDialog {
         });
         searchAdapter.setNewData(new ArrayList<>());
     }
+
+    // takagen99 : Fix on Key Enter
+    private final View.OnKeyListener onSoftKeyPress = new View.OnKeyListener() {
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                // hide soft keyboard, set focus on next button
+                subtitleSearchEt.clearFocus();
+                subtitleSearchBtn.requestFocus();
+            }
+            return false;
+        }
+    };
 
     public void setSearchWord(String wd) {
         wd = wd.replaceAll("(?:（|\\(|\\[|【|\\.mp4|\\.mkv|\\.avi|\\.MP4|\\.MKV|\\.AVI)", "");
@@ -141,7 +157,7 @@ public class SearchSubtitleDialog extends BaseDialog {
         subtitleViewModel.searchResult.observe((LifecycleOwner) mContext, new Observer<SubtitleData>() {
             @Override
             public void onChanged(SubtitleData subtitleData) {
-                List<Subtitle> data = subtitleData.getSubtitleList();
+                List<SubtitleBean> data = subtitleData.getSubtitleList();
                 loadingBar.setVisibility(View.GONE);
                 mGridView.setVisibility(View.VISIBLE);
                 if (data == null) {
@@ -190,7 +206,7 @@ public class SearchSubtitleDialog extends BaseDialog {
         });
     }
 
-    private void loadSubtitle(Subtitle subtitle) {
+    private void loadSubtitle(SubtitleBean subtitle) {
         subtitleViewModel.getSubtitleUrl(subtitle, mSubtitleLoader);
     }
 
@@ -199,7 +215,7 @@ public class SearchSubtitleDialog extends BaseDialog {
     }
 
     public interface SubtitleLoader {
-        void loadSubtitle(Subtitle subtitle);
+        void loadSubtitle(SubtitleBean subtitle);
     }
 
     @Override

@@ -398,8 +398,12 @@ public class HomeActivity extends BaseActivity {
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                if (!useCacheConfig)
+                                if (!useCacheConfig) {
+                                    if (Hawk.get(HawkConfig.HOME_DEFAULT_SHOW, false)) {
+                                        jumpActivity(LivePlayActivity.class);
+                                   }
                                     Toast.makeText(HomeActivity.this, getString(R.string.hm_ok), Toast.LENGTH_SHORT).show();
+                                }
                                 initData();
                             }
                         }, 50);
@@ -416,7 +420,10 @@ public class HomeActivity extends BaseActivity {
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(HomeActivity.this, getString(R.string.hm_notok), Toast.LENGTH_SHORT).show();
+                                if ("".equals(msg))
+                                    Toast.makeText(HomeActivity.this, getString(R.string.hm_notok), Toast.LENGTH_SHORT).show();
+                                else
+                                    Toast.makeText(HomeActivity.this, msg, Toast.LENGTH_SHORT).show();
                                 initData();
                             }
                         });
