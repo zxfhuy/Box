@@ -2,6 +2,7 @@ package com.github.tvbox.osc.viewmodel;
 
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -249,7 +250,7 @@ public class SourceViewModel extends ViewModel {
                         json(listResult, sp.categoryContent(sortData.id, page + "", true, sortData.filterSelect), homeSourceBean.getKey());
                     } catch (Throwable th) {
                         th.printStackTrace();
-                        json(listResult, "", homeSourceBean.getKey());
+                        listResult.postValue(null);
                     }
                 }
             });
@@ -445,8 +446,11 @@ public class SourceViewModel extends ViewModel {
         }
         String id = urlid; 
         SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
-		if (sourceBean == null)
-			detailResult.postValue(null);
+		if (sourceBean == null) {
+            detailResult.postValue(null);
+            Log.e("sourceBean", "get sourceBean got null, this should not be happended, maybe apiconfig get from http failed and use cache, sourceKey is " + sourceKey);
+            return;
+        }
         int type = sourceBean.getType();
         if (type == 3) {
             spThreadPool.execute(new Runnable() {
@@ -459,7 +463,7 @@ public class SourceViewModel extends ViewModel {
                         json(detailResult, sp.detailContent(ids), sourceBean.getKey());
                     } catch (Throwable th) {
                         th.printStackTrace();
-                        json(detailResult, "", sourceBean.getKey());
+                        detailResult.postValue(null);
                     }
                 }
             });

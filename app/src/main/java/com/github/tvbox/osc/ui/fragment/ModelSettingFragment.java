@@ -27,7 +27,9 @@ import com.github.tvbox.osc.ui.dialog.ApiHistoryDialog;
 import com.github.tvbox.osc.ui.dialog.BackupDialog;
 import com.github.tvbox.osc.ui.dialog.HomeIconDialog;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
+import com.github.tvbox.osc.ui.dialog.ResetDialog;
 import com.github.tvbox.osc.ui.dialog.XWalkInitDialog;
+import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.HistoryHelper;
@@ -82,6 +84,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvParseWebView;
     private TextView tvSearchView;
     private TextView tvDns;
+    private TextView tvFastSearchText;
 
     public static ModelSettingFragment newInstance() {
         return new ModelSettingFragment().setArguments();
@@ -98,6 +101,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     protected void init() {
+    	tvFastSearchText = findViewById(R.id.showFastSearchText);
+        tvFastSearchText.setText(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) ? "已开启" : "已关闭");
         tvDebugOpen = findViewById(R.id.tvDebugOpen);
         tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "开启" : "关闭");
         tvApi = findViewById(R.id.tvApi);
@@ -629,6 +634,15 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 dialog.show();
             }
         });
+        // resetApp
+        findViewById(R.id.llReset).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                ResetDialog dialog = new ResetDialog(mActivity);
+                dialog.show();
+            }
+        });
         // Load Wallpaper from URL -------------------------------------
         findViewById(R.id.llWp).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -699,6 +713,14 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     }
                 }, types, defaultPos);
                 dialog.show();
+            }
+        });
+        findViewById(R.id.showFastSearch).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                Hawk.put(HawkConfig.FAST_SEARCH_MODE, !Hawk.get(HawkConfig.FAST_SEARCH_MODE, false));
+                tvFastSearchText.setText(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) ? "已开启" : "已关闭");
             }
         });
         // Select App Language ( English / Chinese ) -----------------

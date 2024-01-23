@@ -45,6 +45,7 @@ import com.github.tvbox.osc.player.controller.VodController;
 import com.github.tvbox.osc.server.PlayService;
 import com.github.tvbox.osc.ui.adapter.SeriesAdapter;
 import com.github.tvbox.osc.ui.adapter.SeriesFlagAdapter;
+import com.github.tvbox.osc.ui.dialog.DescDialog;
 import com.github.tvbox.osc.ui.dialog.PushDialog;
 import com.github.tvbox.osc.ui.dialog.QuickSearchDialog;
 import com.github.tvbox.osc.ui.fragment.PlayFragment;
@@ -104,6 +105,7 @@ public class DetailActivity extends BaseActivity {
     private TextView tvActor;
     private TextView tvDirector;
     private TextView tvDes;
+    private TextView tvDesc;
     private TextView tvPlay;
     private TextView tvSort;
     private TextView tvPush;
@@ -203,6 +205,7 @@ public class DetailActivity extends BaseActivity {
         tvActor = findViewById(R.id.tvActor);
         tvDirector = findViewById(R.id.tvDirector);
         tvDes = findViewById(R.id.tvDes);
+        tvDesc = findViewById(R.id.tvDesc);
         tvPlay = findViewById(R.id.tvPlay);
         tvSort = findViewById(R.id.tvSort);
         tvPush = findViewById(R.id.tvPush);
@@ -329,6 +332,38 @@ public class DetailActivity extends BaseActivity {
                 }
             }
         });
+        tvDesc.setOnClickListener(new View.OnClickListener() {@Override
+            public void onClick(View v) {
+            	runOnUiThread(new Runnable() {@Override
+                    public void run() {
+		                FastClickCheckUtil.check(v);
+		                DescDialog dialog = new DescDialog(mContext);
+		                //  dialog.setTip("内容简介");
+		                dialog.setDescribe(removeHtmlTag(mVideo.des));
+		                dialog.show();
+		            }
+		        });
+            }
+        });
+
+        tvDesc.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FastClickCheckUtil.check(v);
+                        ClipboardManager clipprofile = (ClipboardManager) DetailActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
+                        String cpContent = removeHtmlTag(mVideo.des);
+                        ClipData clipData = ClipData.newPlainText(null,cpContent);
+                        clipprofile.setPrimaryClip(clipData);
+                        Toast.makeText(DetailActivity.this, "已复制：" + cpContent, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return true;
+            }
+        });
+
         tvPlayUrl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -415,7 +450,7 @@ public class DetailActivity extends BaseActivity {
                         reload = true;
                     }
                     //选集全屏 想选集不全屏的注释下面一行
-                    if (showPreview && !fullWindows) toggleFullPreview();
+                    if (showPreview && !fullWindows && playFragment.getPlayer().isPlaying()) toggleFullPreview();
                     if (reload || !showPreview) jumpToPlay();
                 }
             }
@@ -1092,6 +1127,7 @@ public class DetailActivity extends BaseActivity {
         tvPlay.setFocusable(!fullWindows);
         tvSort.setFocusable(!fullWindows);
         tvPush.setFocusable(!fullWindows);
+        tvDesc.setFocusable(!fullWindows);
         tvCollect.setFocusable(!fullWindows);
         tvQuickSearch.setFocusable(!fullWindows);
         toggleSubtitleTextSize();

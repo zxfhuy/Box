@@ -165,5 +165,6 @@ public class PlayerHelper {
                 break;
         }
         return scaleText;
-    }
+    }  
+
 }
