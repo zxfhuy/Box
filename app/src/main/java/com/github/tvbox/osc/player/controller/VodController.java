@@ -238,7 +238,7 @@ public class VodController extends BaseController {
     LinearLayout mSpeedll;
 
     // pause container
-    public static FrameLayout mProgressTop;
+    public FrameLayout mProgressTop;
     ImageView mPauseIcon;
     LinearLayout mTapSeek;
 
@@ -1019,6 +1019,7 @@ public class VodController extends BaseController {
     void initSubtitleInfo() {
         int subtitleTextSize = SubtitleHelper.getTextSize(mActivity);
         mSubtitleView.setTextSize(subtitleTextSize);
+        SubtitleHelper.upTextStyle(mSubtitleView);
     }
 
     @Override

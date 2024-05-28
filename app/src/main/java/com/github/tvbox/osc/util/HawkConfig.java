@@ -17,7 +17,7 @@ public class HawkConfig {
     public static final String LIVE_HISTORY = "live_history";
     public static final String EPG_URL = "epg_url";
     public static final String EPG_HISTORY = "epg_history";
-
+    public static final String PROXY_SERVER = "proxy_server";
     // Settings
     public static final String DEBUG_OPEN = "debug_open";
     public static final String HOME_API = "home_api";
@@ -49,6 +49,7 @@ public class HawkConfig {
     public static final String SOURCES_FOR_SEARCH = "checked_sources_for_search";
     public static final String STORAGE_DRIVE_SORT = "storage_drive_sort";
     public static final String SUBTITLE_TEXT_SIZE = "subtitle_text_size";
+    public static final String SUBTITLE_TEXT_STYLE = "subtitle_text_style";
     public static final String SUBTITLE_TIME_DELAY = "subtitle_time_delay";
     public static final String THEME_SELECT = "theme_select";
     public static final String BACKGROUND_PLAY_TYPE = "background_play_type";
@@ -64,6 +65,7 @@ public class HawkConfig {
     public static final String LIVE_SHOW_NET_SPEED = "live_show_net_speed";
     public static final String LIVE_SHOW_TIME = "live_show_time";
     public static final String LIVE_SKIP_PASSWORD = "live_skip_password";
+    public static final String LIVE_PLAYER_TYPE = "live_player_type"; // 0 系统 1 ijk 2 exo
 
     public static boolean isDebug() {
         return Hawk.get(DEBUG_OPEN, false);
