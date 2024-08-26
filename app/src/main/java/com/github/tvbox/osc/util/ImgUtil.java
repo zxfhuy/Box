@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 import androidx.annotation.Nullable;
 
-import com.aminography.redirectglide.GlideApp;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.DecodeFormat;
@@ -70,12 +69,12 @@ public class ImgUtil {
             if (roundingRadius == 0) roundingRadius = 1;
             RequestOptions requestOptions = new RequestOptions()
                 .format(DecodeFormat.PREFER_RGB_565)
-                .diskCacheStrategy(getDiskCacheStrategy(0))
+                .diskCacheStrategy(getDiskCacheStrategy(4))
                 .dontAnimate()
                 .transform(
             new CenterCrop(),
             new RoundedCorners(roundingRadius));
-            GlideApp.with(App.getInstance())
+            Glide.with(App.getInstance())
                 .asBitmap()
                 .load(getUrl(url))
                 .error(R.drawable.img_loading_placeholder)
@@ -153,7 +152,7 @@ public class ImgUtil {
         if (url.contains("@User-Agent=")) ua = url.split("@User-Agent=")[1].split("@")[0];
         if (url.contains("@Referer=")) referer = url.split("@Referer=")[1].split("@")[0];
         url = url.split("@")[0];
-
+        if(TextUtils.isEmpty(url)) return null;
         /*   AuthInfo authInfo = new AuthInfo(url);
         url = authInfo.url; */
 
